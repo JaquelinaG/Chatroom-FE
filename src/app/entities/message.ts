@@ -4,10 +4,12 @@ export class Message {
             json = {};
         }
 
-        this.message = json.message || "";
+        this.text = json.text || "";
         this.timestamp = json.timestamp || null;
+        this.name = json.name || "";
     }
 
-    message: string;
+    text: string;
     timestamp: Date;
+    name: string;
 }

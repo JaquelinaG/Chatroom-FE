@@ -1,0 +1,18 @@
+<div>
+    <h1>Chatroom</h1>
+    <div>
+        <form [formGroup]="chatForm" (ngSubmit)="onSendMessage(chatForm.value)">
+            <div>
+                <label for="text">Message:</label>
+                <input type="text" id="text" formControlName="text" required>
+            </div>
+            <button type="submit" id="send" title="Send" disabled="chatForm.valid">Send</button>
+        </form>
+    </div>
+
+    <div *ngIf="messages.length > 0">
+        <div *ngFor="let message of messages">
+            <label>{{message.timestamp | date: 'd/M/yy, h:mm a'}} {{message.name}}: {{message.text}}</label>
+        </div>
+    </div>
+</div>
