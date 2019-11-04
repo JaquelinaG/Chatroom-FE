@@ -6,12 +6,12 @@
                 <label for="text">Message:</label>
                 <input type="text" id="text" formControlName="text" required>
             </div>
-            <button type="submit" id="send" title="Send" disabled="chatForm.valid">Send</button>
+            <button type="submit" id="send" title="Send" [disabled]="!chatForm.valid">Send</button>
         </form>
     </div>
 
     <div *ngIf="messages.length > 0">
-        <div *ngFor="let message of messages">
+        <div *ngFor="let message of recentMessages">
             <label>{{message.timestamp | date: 'd/M/yy, h:mm a'}} {{message.name}}: {{message.text}}</label>
         </div>
     </div>

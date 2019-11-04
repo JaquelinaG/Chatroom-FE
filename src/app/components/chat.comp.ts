@@ -1,7 +1,9 @@
 import { Component, OnInit } from "@angular/core";
+import { FormBuilder, FormGroup } from '@angular/forms';
+
 import { Message } from "../entities/message";
-import { FormBuilder } from '@angular/forms';
 import { ChatService } from "../services/chat.service";
+import { ChatHubService } from "../services/chatHub.service";
 
 @Component({
     selector: 'app-chat',
@@ -9,18 +11,15 @@ import { ChatService } from "../services/chat.service";
     styleUrls: ['./chat.comp.css']
 })
 export class ChatComp implements OnInit {
-    //     private hubConnection : HubConnection;
-    //   nick = '';
-    message='';
-    //   messages: ChatMessage[] = [];
-    //   title = 'ChatroomWeb';
-    chatForm;
 
-    //   constructor(private messageService: MessagesService){ }
-    constructor( private service: ChatService,
-        private formBuilder: FormBuilder,
-    ) { 
+    private messages: Array<Message> = new Array<Message>();
+    private maxMessages: number = 50;
+    chatForm: FormGroup;
 
+    constructor(private service: ChatService,
+                private hubService: ChatHubService,
+                private formBuilder: FormBuilder) {
+        
         this.chatForm = this.formBuilder.group({
             name: "",
             text: "",
@@ -29,68 +28,35 @@ export class ChatComp implements OnInit {
     }
 
     ngOnInit(): void {
-        //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-        //Add 'implements OnInit' to the class.
-        //     this.nick = localStorage.getItem("user");
+        
+        this.service.getChatMessages().subscribe((res: Array<Message>) => {
+            this.messages = res;
 
-        // this.messageService.getLastMessages().subscribe
-        // (
-        //   (result:ChatMessage[]) => this.messages = result
-        // );
-
-        // this.hubConnection = new HubConnectionBuilder().withUrl(`${environment.apiUrl}/chat`, {
-        //   skipNegotiation: true,
-        //   transport: HttpTransportType.WebSockets      
-        // }).build();
-
-        // this.hubConnection
-        //   .start()
-        //   .then(() => console.log('Connection started!'))
-        //   .catch(err => console.log('Error while establishing connection :('));
-
-        // this.hubConnection.on('sendToAll', (nick: string, receivedMessage: string, timestamp: number) => {
-        //   let chatMessage = new ChatMessage();
-        //   chatMessage.nick = nick;
-        //   chatMessage.message = receivedMessage;
-        //   chatMessage.timestamp = timestamp;
-        //   this.messages.push(chatMessage);      
-        // });
+            this.hubService.setupConection(this.messages);
+        });        
     }
 
+    get recentMessages(): Array<Message> {
+       
+        this.messages.sort((m1, m2) => {
+            if (m1.timestamp >= m2.timestamp) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
 
-
-    //   public getMessages(): ChatMessage[]
-    //   {
-    //     this.messages = this.messages
-    //       .sort((m1, m2) => { if (m1.timestamp >= m2.timestamp) return 1; else return -1;})
-    //       .slice(Math.max(this.messages.length - environment.maxMessages, 0));
-
-    //     return this.messages;
-    //   }
-
-    get messages(): Array<Message> {
-        let m = new Array<Message>();
-
-        m.push(new Message({ text: "hola", timestamp: new Date(), name: "Jaqui" }))
-        m.push(new Message({ text: "hola", timestamp: new Date(), name: "Norma" }))
-
-        return m;
+        return this.messages.slice(Math.max(this.messages.length - this.maxMessages, 0));
     }
 
-    onSendMessage(): void {
-        // this.messageService.sendMessage(this.nick, this.message).subscribe(
-        //   () => { this.message = ''; }
-        //   , (err: any) => { console.error(err) }
-        //   );
-        let m : Message;
-        this.service.sendMessage(m);
+    onSendMessage(value: Message): void {
+        value.name = localStorage.getItem("name");
+        value.timestamp = new Date();
+        
+        this.service.sendMessage(value).subscribe(() => {     
+            this.chatForm.controls["text"].setValue("");      
+        }, (err: any) => {
+            console.error(err.toString());
+        });
     }
-
-    onSubmit(customerData) {
-        // Process checkout data here
-        console.warn('Your order has been submitted', customerData);
-    
-        // this.items = this.cartService.clearCart();
-        // this.checkoutForm.reset();
-      }
 }
