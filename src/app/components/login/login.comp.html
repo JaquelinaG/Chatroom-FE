@@ -1,0 +1,15 @@
+<div class="container">
+    <div class="form-container">
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin(loginForm.value)">
+        <div>
+          <h2>Login</h2>
+          <div *ngIf="errorMessage">{{errorMessage}}</div>
+          <br/>
+          <label for="name">Name</label>
+          <input type="text" id="name" formControlName="name" required autofocus>
+          <br/>
+          <button class="btn btn-lg btn-primary btn-block" type="submit" [disabled]="!loginForm.valid">Login</button>
+        </div>
+      </form>
+    </div>
+  </div>

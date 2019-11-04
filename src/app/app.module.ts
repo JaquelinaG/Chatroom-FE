@@ -6,21 +6,25 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { ChatComp } from './components/chat.comp';
+import { LoginComp } from './components/login/login.comp';
+import { ChatroomGuard } from './guards/chatroom-guard.service';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ChatComp
+    ChatComp,
+    LoginComp
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
     RouterModule.forRoot([
-      {path: '', component: ChatComp},
+      {path: 'login', component: LoginComp},
+      {path: '', component: ChatComp,  canActivate: [ChatroomGuard]},      
     ])
   ],
-  providers: [],
+  providers: [ChatroomGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
