@@ -51,7 +51,6 @@ export class ChatComp implements OnInit {
 
     onSendMessage(value: Message): void {
         value.name = localStorage.getItem("name");
-        value.timestamp = new Date();
         
         this.service.sendMessage(value).subscribe(() => {     
             this.chatForm.controls["text"].setValue("");      

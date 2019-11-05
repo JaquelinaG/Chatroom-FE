@@ -25,10 +25,28 @@ export class LoginComp implements OnInit {
 
   onLogin(value: any) {
     if(value && value.name) {
-    localStorage.setItem("name", value.name);
 
-    this.router.navigate(['']);
+      let validation = this.validateName(value.name);
+
+      if(validation == null){
+        localStorage.setItem("name", value.name);
+
+        this.router.navigate(['']);
+      } else {
+        window.alert(validation);
+      }    
     }
+  }
+
+  private validateName(name: string) : string {
+    if(name.trim().length == 0) {
+      return "Name can not be empty!"
+    }
+    if(name == "bot") {
+      return "Name bot is invalid!";
+    }
+
+    return null;
   }
 
   logOut() {

@@ -10,7 +10,7 @@
         </form>
     </div>
 
-    <div *ngIf="messages.length > 0">
+    <div class="container" *ngIf="messages.length > 0" >
         <div *ngFor="let message of recentMessages">
             <label>{{message.timestamp | date: 'd/M/yy, h:mm a'}} {{message.name}}: {{message.text}}</label>
         </div>
